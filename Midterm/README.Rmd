@@ -1,0 +1,98 @@
+---
+title: "Midterm"
+author: "Camille Parchment"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(data.table)
+library(tidyverse)
+```
+
+```{r}
+pulse18 <- fread("pulse2020_puf_18.csv")
+
+```
+
+```{r}
+remove(pulse49)
+remove(wk18, wk49)
+```
+
+```{r}
+pulse18[pulse18$MH_NOTGET == -88] <- NA
+pulse18[pulse18$MH_NOTGET == -99] <- NA
+pulse18[pulse18$MH_SVCS == -88] <- NA
+pulse18[pulse18$MH_SVCS == -99] <- NA
+pulse18[pulse18$MS == -88] <- NA
+pulse18[pulse18$MS == -99] <- NA
+pulse18[pulse18$ANYWORK == -88] <- NA
+pulse18[pulse18$ANYWORK == -99] <- NA
+pulse18[pulse18$HLTHINS1 == -88] <- NA
+pulse18[pulse18$HLTHINS1 == -99] <- NA
+pulse18[pulse18$HLTHINS2 == -88] <- NA
+pulse18[pulse18$HLTHINS2 == -99] <- NA
+pulse18[pulse18$HLTHINS3 == -88] <- NA
+pulse18[pulse18$HLTHINS3 == -99] <- NA
+pulse18[pulse18$HLTHINS4 == -88] <- NA
+pulse18[pulse18$HLTHINS4 == -99] <- NA
+pulse18[pulse18$HLTHINS5 == -88] <- NA
+pulse18[pulse18$HLTHINS5 == -99] <- NA
+pulse18[pulse18$HLTHINS6 == -88] <- NA
+pulse18[pulse18$HLTHINS6 == -99] <- NA
+pulse18[pulse18$HLTHINS7 == -88] <- NA
+pulse18[pulse18$HLTHINS7 == -99] <- NA
+pulse18[pulse18$HLTHINS8 == -88] <- NA
+pulse18[pulse18$HLTHINS8 == -99] <- NA
+```
+```{r}
+summary(pulse18$HLTHINS1)
+```
+
+```{r}
+MHdf <- subset(pulse18, select = c(SCRAM, TBIRTH_YEAR, MS, MH_SVCS, MH_NOTGET, EGENDER, ANYWORK, HLTHINS1, HLTHINS2, HLTHINS3, HLTHINS4, HLTHINS5, HLTHINS6, HLTHINS7, HLTHINS8))
+```
+
+```{r}
+pulse18[pulse18$MH_NOTGET == -88] <- NA
+pulse18[pulse18$MH_NOTGET == -99] <- NA
+pulse18[pulse18$MH_SVCS == -88] <- NA
+pulse18[pulse18$MH_SVCS == -99] <- NA
+pulse18[pulse18$MS == -88] <- NA
+pulse18[pulse18$MS == -99] <- NA
+pulse18[pulse18$ANYWORK == -88] <- NA
+pulse18[pulse18$ANYWORK == -99] <- NA
+pulse18[pulse18$HLTHINS1 == -88] <- NA
+pulse18[pulse18$HLTHINS1 == -99] <- NA
+pulse18[pulse18$HLTHINS2 == -88] <- NA
+pulse18[pulse18$HLTHINS2 == -99] <- NA
+pulse18[pulse18$HLTHINS3 == -88] <- NA
+pulse18[pulse18$HLTHINS3 == -99] <- NA
+pulse18[pulse18$HLTHINS4 == -88] <- NA
+pulse18[pulse18$HLTHINS4 == -99] <- NA
+pulse18[pulse18$HLTHINS5 == -88] <- NA
+pulse18[pulse18$HLTHINS5 == -99] <- NA
+pulse18[pulse18$HLTHINS6 == -88] <- NA
+pulse18[pulse18$HLTHINS6 == -99] <- NA
+pulse18[pulse18$HLTHINS7 == -88] <- NA
+pulse18[pulse18$HLTHINS7 == -99] <- NA
+pulse18[pulse18$HLTHINS8 == -88] <- NA
+pulse18[pulse18$HLTHINS8 == -99] <- NA
+```
+```{r}
+insurance_type <- ifelse(MHdf$HLTHINS1 == "1", 1, 0)
+                  ifelse(MHdf$HLTHINS2 == "1", 1, 0)
+                  ifelse(MHdf$HLTHINS3 == "1", 1, 0)
+                  ifelse(MHdf$HLTHINS4 == "1", 1, 0)
+                  ifelse(MHdf$HLTHINS5 == "1", 1, 0)
+                  ifelse(MHdf$HLTHINS6 == "1", 1, 0)
+                  ifelse(MHdf$HLTHINS7 == "1", 1, 0)
+                  ifelse(MHdf$HLTHINS8 == "1", 1, 0)
+                  
+```
+
