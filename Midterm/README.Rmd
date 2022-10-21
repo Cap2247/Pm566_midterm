@@ -158,12 +158,35 @@ Mh_svs_2 <- ifelse(MHdf_2$PUBHLTH == "1", "Recieved services", "No Services")
 ```
 
 ```{r}
-ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = region_2)) + geom_bar () 
+ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2)) + geom_bar () 
+
 ```
+
+
 ```{r}
 ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = privins)) + geom_bar(position = position_dodge())
+
+```{r}
+table(region_2, privins)
 ```
 ```{r}
-summary(MHdf)
+ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2)) + geom_bar () 
+
+```
+```{r}
+ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar () 
+
+```
+```{r}
+public_insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
+                    ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "2", "Public insurance only", 
+                    ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "1", "Private insurance only", 
+                    ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "2", "No Insurance", NA))))
+                table(public_insurance, useNA = "always")
+
+```
+
+```{r}
+ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = public_insurance)) + geom_bar(position = position_dodge()) 
 ```
 

@@ -192,7 +192,7 @@ Mh_svs_2 <- ifelse(MHdf_2$PUBHLTH == "1", "Recieved services", "No Services")
 ```
 
 ``` r
-ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = region_2)) + geom_bar () 
+ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2)) + geom_bar () 
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
@@ -204,34 +204,44 @@ ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = privins)) + geom_bar(position = position
 ![](README_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
 ``` r
-summary(MHdf)
+table(region_2, privins)
 ```
 
-    ##     SCRAM            TBIRTH_YEAR         MS             MH_SVCS      
-    ##  Length:58729       Min.   :1932   Min.   :-99.000   Min.   :-99.00  
-    ##  Class :character   1st Qu.:1955   1st Qu.:  1.000   1st Qu.:  1.00  
-    ##  Mode  :character   Median :1968   Median :  1.000   Median :  2.00  
-    ##                     Mean   :1968   Mean   :  1.309   Mean   :-13.63  
-    ##                     3rd Qu.:1981   3rd Qu.:  3.000   3rd Qu.:  2.00  
-    ##                     Max.   :2002   Max.   :  5.000   Max.   :  2.00  
-    ##    MH_NOTGET         EGENDER         ANYWORK            HLTHINS1     
-    ##  Min.   :-99.00   Min.   :1.000   Min.   :-99.0000   Min.   :-99.00  
-    ##  1st Qu.:  1.00   1st Qu.:1.000   1st Qu.:  1.0000   1st Qu.:  1.00  
-    ##  Median :  2.00   Median :2.000   Median :  1.0000   Median :  1.00  
-    ##  Mean   :-13.55   Mean   :1.596   Mean   :  0.8205   Mean   :-16.33  
-    ##  3rd Qu.:  2.00   3rd Qu.:2.000   3rd Qu.:  2.0000   3rd Qu.:  2.00  
-    ##  Max.   :  2.00   Max.   :2.000   Max.   :  2.0000   Max.   :  2.00  
-    ##     HLTHINS2        HLTHINS3         HLTHINS4         HLTHINS5     
-    ##  Min.   :-99.0   Min.   :-99.00   Min.   :-99.00   Min.   :-99.00  
-    ##  1st Qu.:-88.0   1st Qu.:  1.00   1st Qu.:-88.00   1st Qu.:-88.00  
-    ##  Median :  2.0   Median :  2.00   Median :  2.00   Median :  2.00  
-    ##  Mean   :-22.7   Mean   :-20.55   Mean   :-24.58   Mean   :-25.13  
-    ##  3rd Qu.:  2.0   3rd Qu.:  2.00   3rd Qu.:  2.00   3rd Qu.:  2.00  
-    ##  Max.   :  2.0   Max.   :  2.00   Max.   :  2.00   Max.   :  2.00  
-    ##     HLTHINS6         HLTHINS7         HLTHINS8     
-    ##  Min.   :-99.00   Min.   :-99.00   Min.   :-99.00  
-    ##  1st Qu.:-88.00   1st Qu.:-88.00   1st Qu.:-88.00  
-    ##  Median :  2.00   Median :  2.00   Median :  2.00  
-    ##  Mean   :-25.38   Mean   :-26.09   Mean   :-28.64  
-    ##  3rd Qu.:  2.00   3rd Qu.:  2.00   3rd Qu.:  2.00  
-    ##  Max.   :  2.00   Max.   :  2.00   Max.   :  2.00
+    ##            privins
+    ## region_2    Has Private insuracne No private insurance
+    ##   Midwest                    6416                 1609
+    ##   Northeast                  4447                 1119
+    ##   South                      8941                 2564
+    ##   West                      10188                 2976
+
+``` r
+ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2)) + geom_bar () 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+
+``` r
+ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar () 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+``` r
+public_insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
+                    ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "2", "Public insurance only", 
+                    ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "1", "Private insurance only", 
+                    ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "2", "No Insurance", NA))))
+                table(public_insurance, useNA = "always")
+```
+
+    ## public_insurance
+    ##                   both           No Insurance Private insurance only 
+    ##                   7773                   2709                  22219 
+    ##  Public insurance only                   <NA> 
+    ##                   5559                  20469
+
+``` r
+ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = public_insurance)) + geom_bar(position = position_dodge()) 
+```
+
+![](README_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
