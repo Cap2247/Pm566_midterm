@@ -20,6 +20,24 @@ pulse18 <- fread("pulse2020_puf_18.csv")
 
 ```
 
+## Introduction 
+
+#### During the COVID-19 pandemic, mental health services were disrupted, causing profound consequences for individuals in need of consistent mental health care. The pandemic exacerbated the need for mental health services which expanded an existing unmet demand. In addition to a shortage of mental health professionals, mental health providers needed to adjust service delivery to comply with safety protocols, which further inhibited access to care for some individuals. Further, at the onset of the pandemic, several state and local governments issued stay-at-home orders to reduce viral spread. These orders resulted in increased emotional distress e.g., anxiety, depression, and loss of employment. Employers are the leading providers of health insurance in the United States, suggesting that newly unemployed individuals may have lost access to secure healthcare coverage. The growing demand for mental health services, possible reduction in coverage, and changing delivery systems, may have decreased access to necessary mental health services during the COVID-19 pandemic. Therefore, the primary aim of this study is to establish insurance-related patterns of mental healthcare utilization. Specifically, did the absence of health insurance decrease access to mental health services during the COVID-19 pandemic? 
+
+## Methods
+
+### Database 
+
+#### The Household Pulse Survey (HPS) is a self-report online survey which measures in real time the social and economic impacts of the COVID-19 pandemic. In this study we analyzed HPS data from week 18,  October 28, 2021 – November 9, 2021. 
+
+### Sample
+
+#### Our study sample were all individuals who needed mental health services and either received services or did not between October 28, 2021, and November 9, 2021.  Mental health services were   Our insurance variable was coded for both private and public insurance, public insurance only, private insurance only, or none. Region was coded for Midwest, Northeast, South, and West depending on the census region. I subset the data from the larger data frame to include only the variables relevant to the study question (Identification number, gender, region, public health insurance, private health insurance, marital status, mental health service received, mental health service not received). We recoded the missing (-99) and non-answered (-88, 3) responses as NA in all variables. 
+
+
+
+
+
 
 
 ```{r echo=FALSE}
