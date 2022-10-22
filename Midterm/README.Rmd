@@ -10,23 +10,23 @@ always_allow_html: true
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r echo=FALSE}
 library(data.table)
 library(tidyverse)
 ```
 
-```{r}
+```{r echo=FALSE}
 pulse18 <- fread("pulse2020_puf_18.csv")
 
 ```
 
 
 
-```{r}
+```{r echo=FALSE}
 MHdf <- subset(pulse18, select = c(SCRAM, TBIRTH_YEAR, MS, MH_SVCS, MH_NOTGET, EGENDER, ANYWORK, HLTHINS1, HLTHINS2, HLTHINS3, HLTHINS4, HLTHINS5, HLTHINS6, HLTHINS7, HLTHINS8))
 ```
 
-```{r}
+```{r echo=FALSE}
 pulse18[pulse18$MH_NOTGET == -88] <- NA
 pulse18[pulse18$MH_NOTGET == -99] <- NA
 pulse18[pulse18$MH_SVCS == -88] <- NA
@@ -52,19 +52,13 @@ pulse18[pulse18$HLTHINS7 == -99] <- NA
 pulse18[pulse18$HLTHINS8 == -88] <- NA
 pulse18[pulse18$HLTHINS8 == -99] <- NA
 ```
-```{r}
-summary(pulse18$HLTHINS1)
-```
 
-```{r}
 
-```
-
-```{r}
+```{r echo=FALSE}
 MHdf_2 <- subset(pulse18, select = c(SCRAM, REGION, PUBHLTH, PRIVHLTH, EST_ST, TBIRTH_YEAR, MS, MH_SVCS, MH_NOTGET, EGENDER, ANYWORK, HLTHINS1, HLTHINS2, HLTHINS3, HLTHINS4, HLTHINS5, HLTHINS6, HLTHINS7, HLTHINS8 ))
 ```
 
-```{r}
+```{r echo=FALSE}
 pulse18[pulse18$MH_NOTGET == -88] <- NA
 pulse18[pulse18$MH_NOTGET == -99] <- NA
 pulse18[pulse18$MH_SVCS == -88] <- NA
@@ -90,7 +84,7 @@ pulse18[pulse18$HLTHINS7 == -99] <- NA
 pulse18[pulse18$HLTHINS8 == -88] <- NA
 pulse18[pulse18$HLTHINS8 == -99] <- NA
 ```
-```{r}
+```{r echo=FALSE}
 ins1_empl <- ifelse(MHdf$HLTHINS1 == "1", 1,0)
 ins2_markt <- ifelse(MHdf$HLTHINS2 == "1", 1,0)
 ins3_medicare <- ifelse(MHdf$HLTHINS3 == "1", 1,0)
@@ -102,83 +96,68 @@ ins8_other <- ifelse(MHdf$HLTHINS8 == "1", 1,0)
 
 ```
 
-```{r}
+```{r echo=FALSE}
 MHdf_2[MHdf_2$PUBHLTH == 3] <- NA
 MHdf_2[MHdf_2$PRIVHLTH == 3] <- NA
 ```
-```{r}
+```{r echo=FALSE}
 pubins <- ifelse(MHdf_2$PUBHLTH == "1", "Has public insurance", "No public insurance")
 privins <- ifelse(MHdf_2$PRIVHLTH == "1", "Has Private insuracne","No private insurance")
 ```
 
-```{r}
+```{r echo=FALSE}
 library(ggplot2)
 ```
-```{r}
+```{r echo=FALSE}
 region_2 <- ifelse(MHdf_2$REGION == "1", "Northeast",
             ifelse(MHdf_2$REGION == "2", "South",
             ifelse(MHdf_2$REGION == "3", "Midwest", "West")))
 ```
-```{r}
+```{r echo=FALSE}
 table(region_2)
 ```
-```{r}
+```{r echo=FALSE}
 head(region_2)
 ```
 
 
-```{r}
+```{r echo=FALSE}
 MH_sum <- sum(MHdf_2$MH_NOTGET, na.rm = TRUE)
 ```
 
-```{r}
-table(ins1_empl
-    )
-```
 
-```{r}
-prop.table(table(ins1_empl))
-```
-```{r}
-table(ins2_markt)/length(ins2_markt)
-```
-```{r}
-sd(ins1_empl)
-```
 
-```{r}
+```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= region_2, fill = privins)) + geom_bar(position = position_dodge())
 
 ggplot(MHdf_2, aes(x= region_2, fill = pubins, na.rm= TRUE)) + geom_bar(position = position_dodge())
 ```
 
-```{r}
+```{r echo= FALSE}
 Mh_ntgt_2 <- ifelse(MHdf_2$MH_NOTGET == "1", "Services Not Recieved", "Services Recieved")
 Mh_svs_2 <- ifelse(MHdf_2$PUBHLTH == "1", "Recieved services", "No Services")
 
 ```
 
-```{r}
+```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2)) + geom_bar () 
 
 ```
 
 
-```{r}
+```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = privins)) + geom_bar(position = position_dodge())
 
-```{r}
-table(region_2, privins)
-```
-```{r}
+
+```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2, na.rm= TRUE )) + geom_bar () 
 
 ```
-```{r}
+```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar () 
 
 ```
-```{r}
+```{r echo=FALSE}
 insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
                     ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "2", "Public insurance only", 
                     ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "1", "Private insurance only", 
@@ -187,21 +166,22 @@ insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both",
 
 ```
 
-```{r}
-ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = insurance)) + geom_bar(position = position_dodge()) 
+```{r echo=FALSE}
+ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = insurance)) + geom_bar(position = position_dodge())
 ```
-```{r}
+```{r echo=FALSE}
 library(knitr)
 library(kableExtra)
 library(tinytex)
 ```
-```{r}
+```{r echo=FALSE}
 install.packages("kableExtra")
 ```
-```{r}
+```{r echo=FALSE}
 MHdf_2 <- na.omit(MHdf_2)
 ```
-```{r}
+```{r echo=FALSE}
 remove(public_insurance)
 ```
+
 
