@@ -21,6 +21,7 @@ pulse18 <- fread("pulse2020_puf_18.csv")
 ```
 
 
+
 ```{r}
 MHdf <- subset(pulse18, select = c(SCRAM, TBIRTH_YEAR, MS, MH_SVCS, MH_NOTGET, EGENDER, ANYWORK, HLTHINS1, HLTHINS2, HLTHINS3, HLTHINS4, HLTHINS5, HLTHINS6, HLTHINS7, HLTHINS8))
 ```
@@ -170,7 +171,7 @@ ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = privins)) + geom_bar(position = position
 table(region_2, privins)
 ```
 ```{r}
-ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2)) + geom_bar () 
+ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2, na.rm= TRUE )) + geom_bar () 
 
 ```
 ```{r}
@@ -178,15 +179,29 @@ ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar ()
 
 ```
 ```{r}
-public_insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
+insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
                     ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "2", "Public insurance only", 
                     ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "1", "Private insurance only", 
                     ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "2", "No Insurance", NA))))
-                table(public_insurance, useNA = "always")
+                table(insurance, useNA = "always")
 
 ```
 
 ```{r}
-ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = public_insurance)) + geom_bar(position = position_dodge()) 
+ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = insurance)) + geom_bar(position = position_dodge()) 
+```
+```{r}
+library(knitr)
+library(kableExtra)
+library(tinytex)
+```
+```{r}
+install.packages("kableExtra")
+```
+```{r}
+MHdf_2 <- na.omit(MHdf_2)
+```
+```{r}
+remove(public_insurance)
 ```
 

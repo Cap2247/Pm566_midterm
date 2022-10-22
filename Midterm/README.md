@@ -215,7 +215,7 @@ table(region_2, privins)
     ##   West                      10188                 2976
 
 ``` r
-ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2)) + geom_bar () 
+ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2, na.rm= TRUE )) + geom_bar () 
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
@@ -227,21 +227,53 @@ ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar ()
 ![](README_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
 ``` r
-public_insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
+insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
                     ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "2", "Public insurance only", 
                     ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "1", "Private insurance only", 
                     ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "2", "No Insurance", NA))))
-                table(public_insurance, useNA = "always")
+                table(insurance, useNA = "always")
 ```
 
-    ## public_insurance
+    ## insurance
     ##                   both           No Insurance Private insurance only 
     ##                   7773                   2709                  22219 
     ##  Public insurance only                   <NA> 
     ##                   5559                  20469
 
 ``` r
-ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = public_insurance)) + geom_bar(position = position_dodge()) 
+ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = insurance)) + geom_bar(position = position_dodge()) 
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+
+``` r
+library(knitr)
+library(kableExtra)
+```
+
+    ## 
+    ## Attaching package: 'kableExtra'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     group_rows
+
+``` r
+library(tinytex)
+```
+
+``` r
+install.packages("kableExtra")
+```
+
+    ## Warning: package 'kableExtra' is in use and will not be installed
+
+``` r
+MHdf_2 <- na.omit(MHdf_2)
+```
+
+``` r
+remove(public_insurance)
+```
+
+    ## Warning in remove(public_insurance): object 'public_insurance' not found
