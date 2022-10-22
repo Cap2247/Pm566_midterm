@@ -40,10 +40,6 @@ Camille Parchment
 
 ![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
-![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
-![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
-
     ## insurance
     ##                   both           No Insurance Private insurance only 
     ##                   7773                   2709                  22219 

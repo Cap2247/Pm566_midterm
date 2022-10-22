@@ -143,7 +143,15 @@ head(region_2)
 MH_sum <- sum(MHdf_2$MH_NOTGET, na.rm = TRUE)
 ```
 
+```{r}
+table(Mh_ntgt_2, insurance)
+ 
+```
 
+
+```{r}
+table(Mh_ntgt_2, region_2)
+```
 
 ```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= region_2, fill = privins)) + geom_bar(position = position_dodge())
@@ -158,21 +166,21 @@ Mh_svs_2 <- ifelse(MHdf_2$PUBHLTH == "1", "Recieved services", "No Services")
 ```
 
 ```{r echo=FALSE}
-ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2)) + geom_bar () 
+ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2)) + geom_bar() 
 
 ```
 
 
 ```{r echo=FALSE}
-ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = privins)) + geom_bar(position = position_dodge())
-
+# ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = privins)) + geom_bar(position = position_dodge())
+```
 
 ```{r echo=FALSE}
-ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2, na.rm= TRUE )) + geom_bar () 
+# ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2, na.rm= TRUE )) + geom_bar () 
 
 ```
 ```{r echo=FALSE}
-ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar () 
+# ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar () 
 
 ```
 ```{r echo=FALSE}
@@ -183,6 +191,8 @@ insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both",
                 table(insurance, useNA = "always")
 
 ```
+
+
 
 ```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = insurance)) + geom_bar(position = position_dodge())
