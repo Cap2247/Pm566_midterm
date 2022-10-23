@@ -77,6 +77,10 @@ MHdf_2 <- subset(pulse18, select = c(SCRAM, REGION, PUBHLTH, PRIVHLTH, EST_ST, T
 ```
 
 ```{r echo=FALSE}
+MHdf_2 <- na.omit(MHdf_2)
+```
+
+```{r echo=FALSE}
 pulse18[pulse18$MH_NOTGET == -88] <- NA
 pulse18[pulse18$MH_NOTGET == -99] <- NA
 pulse18[pulse18$MH_SVCS == -88] <- NA
@@ -114,6 +118,21 @@ ins8_other <- ifelse(MHdf$HLTHINS8 == "1", 1,0)
 
 ```
 
+
+```{r echo= FALSE}
+MHdf_2$Mh_ntgt_2 <- ifelse(MHdf_2$MH_NOTGET == "1", "Services Not Recieved", "Services Recieved")
+Mh_svs_2 <- ifelse(MHdf_2$PUBHLTH == "1", "Recieved services", "No Services")
+
+```
+```{r echo=FALSE}
+MHdf_2$insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
+                    ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "2", "Public insurance only", 
+                    ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "1", "Private insurance only", 
+                    ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "2", "No Insurance", NA))))
+                table(MHdf_2$insurance, useNA = "always")
+
+```
+
 ```{r echo=FALSE}
 MHdf_2[MHdf_2$PUBHLTH == 3] <- NA
 MHdf_2[MHdf_2$PRIVHLTH == 3] <- NA
@@ -127,46 +146,38 @@ privins <- ifelse(MHdf_2$PRIVHLTH == "1", "Has Private insuracne","No private in
 library(ggplot2)
 ```
 ```{r echo=FALSE}
-region_2 <- ifelse(MHdf_2$REGION == "1", "Northeast",
+MHdf_2$region_2 <- ifelse(MHdf_2$REGION == "1", "Northeast",
             ifelse(MHdf_2$REGION == "2", "South",
             ifelse(MHdf_2$REGION == "3", "Midwest", "West")))
 ```
-```{r echo=FALSE}
-table(region_2)
-```
-```{r echo=FALSE}
-head(region_2)
-```
+
 
 
 ```{r echo=FALSE}
 MH_sum <- sum(MHdf_2$MH_NOTGET, na.rm = TRUE)
 ```
+```{r echo=FALSE}
+prop.table(table(MHdf_2$Mh_ntgt_2, MHdf_2$insurance))*100
+```
 
-```{r}
-table(Mh_ntgt_2, insurance)
+```{r echo = FALSE}
+table(MHdf_2$Mh_ntgt_2, MHdf_2$insurance)
  
 ```
 
 
-```{r}
-table(Mh_ntgt_2, region_2)
-```
 
 ```{r echo=FALSE}
-ggplot(MHdf_2, aes(x= region_2, fill = privins)) + geom_bar(position = position_dodge())
-
-ggplot(MHdf_2, aes(x= region_2, fill = pubins, na.rm= TRUE)) + geom_bar(position = position_dodge())
-```
-
-```{r echo= FALSE}
-Mh_ntgt_2 <- ifelse(MHdf_2$MH_NOTGET == "1", "Services Not Recieved", "Services Recieved")
-Mh_svs_2 <- ifelse(MHdf_2$PUBHLTH == "1", "Recieved services", "No Services")
+ggplot(MHdf_2, aes(x= MHdf_2$region_2, fill = Mh_ntgt_2)) + geom_bar( position = position_dodge()) + labs(x= "REGION", y= "Count", subtitle = "Mental Health Services Needed but Not Recived by Region ", title = "Table 1")
+ 
 
 ```
 
 ```{r echo=FALSE}
-ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2)) + geom_bar() 
+ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = MHdf_2$insurance)) + geom_bar(position = position_dodge()) + labs(x= "Mental Health Services", y= "Count", subtitle = "Mental Health Services Needed but Not Recived by Insurance", title = "Table 2")
+```
+```{r echo=FALSE}
+ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2 )) + geom_bar(position = position_dodge())+ facet_wrap(~ MHdf_2$insurance) + labs(x= "REGION", y= "Count", subtitle = "Mental Health Services Needed but Not Recived by Region and Insurance", title = "Table 3")
 
 ```
 
@@ -183,33 +194,16 @@ ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2)) + geom_bar()
 # ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar () 
 
 ```
-```{r echo=FALSE}
-insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
-                    ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "2", "Public insurance only", 
-                    ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "1", "Private insurance only", 
-                    ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "2", "No Insurance", NA))))
-                table(insurance, useNA = "always")
 
-```
 
 
 
 ```{r echo=FALSE}
-ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = insurance)) + geom_bar(position = position_dodge())
-```
-```{r echo=FALSE}
-library(knitr)
-library(kableExtra)
-library(tinytex)
-```
-```{r echo=FALSE}
-install.packages("kableExtra")
-```
-```{r echo=FALSE}
-MHdf_2 <- na.omit(MHdf_2)
-```
-```{r echo=FALSE}
-remove(public_insurance)
+ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = MHdf_2$insurance)) + geom_bar(position = position_dodge()) + labs(x= "Mental Health Services", y= "Count", subtitle = "Mental Health Services Needed but Not Recived by Insurance", title = "Table 2")
 ```
 
+
+## Conclusion 
+
+#### The results indicate that 6% (n= 2524) of individuals with private insurance who needed mental health services did not receive services. Conversely, 2% (n= 772) of people with public insurance who needed mental health services did not receive services. Our findings suggest that although mental health services were delayed during the pandemic a higher percentage of people who needed mental health service but did not receive it consisted of people with private insurance. Further research is needed to identify service and diagnosis-specific patterns in mental health care. 
 

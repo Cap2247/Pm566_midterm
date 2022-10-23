@@ -1,7 +1,7 @@
 Midterm
 ================
 Camille Parchment
-2022-10-21
+2022-10-23
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
     ## ✔ ggplot2 3.3.6     ✔ purrr   0.3.4
@@ -30,31 +30,37 @@ Camille Parchment
 
 #### Our study sample were all individuals who needed mental health services and either received services or did not between October 28, 2021, and November 9, 2021. Mental health services were Our insurance variable was coded for both private and public insurance, public insurance only, private insurance only, or none. Region was coded for Midwest, Northeast, South, and West depending on the census region. I subset the data from the larger data frame to include only the variables relevant to the study question (Identification number, gender, region, public health insurance, private health insurance, marital status, mental health service received, mental health service not received). We recoded the missing (-99) and non-answered (-88, 3) responses as NA in all variables.
 
-    ## region_2
-    ##   Midwest Northeast     South      West 
-    ##      8025      5566     11505     13164
-
-    ## [1] "South" NA      "South" "South" "South" "South"
-
-![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-15-2.png)<!-- -->
-
-![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
-
-    ## insurance
+    ## 
     ##                   both           No Insurance Private insurance only 
     ##                   7773                   2709                  22219 
     ##  Public insurance only                   <NA> 
-    ##                   5559                  20469
+    ##                   5559                      0
 
-![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+    ##                        
+    ##                              both No Insurance Private insurance only
+    ##   Services Not Recieved  1.615264     1.484579               6.596968
+    ##   Services Recieved     18.700993     5.595923              51.476738
+    ##                        
+    ##                         Public insurance only
+    ##   Services Not Recieved              2.017773
+    ##   Services Recieved                 12.511762
 
-    ## 
-    ## Attaching package: 'kableExtra'
+    ##                        
+    ##                          both No Insurance Private insurance only
+    ##   Services Not Recieved   618          568                   2524
+    ##   Services Recieved      7155         2141                  19695
+    ##                        
+    ##                         Public insurance only
+    ##   Services Not Recieved                   772
+    ##   Services Recieved                      4787
 
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     group_rows
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
-    ## Warning: package 'kableExtra' is in use and will not be installed
+![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
-    ## Warning in remove(public_insurance): object 'public_insurance' not found
+![](README_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+
+## Conclusion
+
+#### The results indicate that 6% (n= 2524) of individuals with private insurance who needed mental health services did not receive services. Conversely, 2% (n= 772) of people with public insurance who needed mental health services did not receive services. Our findings suggest that although mental health services were delayed during the pandemic a higher percentage of people who needed mental health service but did not receive it consisted of people with private insurance. Further research is needed to identify service and diagnosis-specific patterns in mental health care.
