@@ -156,10 +156,10 @@ DF2 <- MHdf_2 %>%
 dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
   filter(MHdf_2$insurance == "Public insurance only") %>%
   group_by(state) %>%
-  summarise(num_sv = n(),
-            num_rec = sum(MH_NOTGET)) %>%
-  mutate(services_nr = num_sv - num_rec, 
-  rec_rate = num_rec/num_sv) 
+  summarise(Total_sv_needed = n(),
+            num_notrec = sum(MH_NOTGET)) %>%
+  mutate(services_rec = Total_sv_needed - num_notrec, 
+  Notrec_rate = num_notrec/Total_sv_needed)  
   
 ```
 
@@ -168,14 +168,57 @@ DF4 <- MHdf_2 %>%
 dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
   filter(MHdf_2$insurance == "Private insurance only") %>%
   group_by(state) %>%
-  summarise(num_sv = n(),
-            num_rec = sum(MH_NOTGET)) %>%
-  mutate(services_nr = num_sv - num_rec, 
-  rec_rate = services_nr/num_sv) 
+  summarise(Total_sv_needed = n(),
+            num_notrec = sum(MH_NOTGET)) %>%
+  mutate(services_rec = Total_sv_needed - num_notrec, 
+  Notrec_rate = num_notrec/Total_sv_needed) 
   
 ```
 
 ```{r}
+DF_income_Pub <- MHdf_2 %>%
+dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
+  filter(MHdf_2$insurance == "Public insurance only") %>%
+  group_by(income) %>%
+  summarise(Total_sv_needed = n(),
+            num_notrec = sum(MH_NOTGET)) %>%
+  mutate(services_rec = Total_sv_needed - num_notrec, 
+  Notrec_rate = num_notrec/Total_sv_needed)  
+```
+
+```{r}
+DF_income_Pri <- MHdf_2 %>%
+dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
+  filter(MHdf_2$insurance == "Private insurance only") %>%
+  group_by(income) %>%
+  summarise(Total_sv_needed = n(),
+            num_notrec = sum(MH_NOTGET)) %>%
+  mutate(services_rec = Total_sv_needed - num_notrec, 
+  Notrec_rate = num_notrec/Total_sv_needed)
+```
+
+```{r}
+DF_region_Pri <- MHdf_2 %>%
+dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
+  filter(MHdf_2$insurance == "Private insurance only") %>%
+  group_by(region_2) %>%
+  summarise(Total_sv_needed = n(),
+            num_notrec = sum(MH_NOTGET)) %>%
+  mutate(services_rec = Total_sv_needed - num_notrec, 
+  Notrec_rate = num_notrec/Total_sv_needed)
+```
+
+```{r}
+DF_region_Pub <- MHdf_2 %>%
+dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
+  filter(MHdf_2$insurance == "Public insurance only") %>%
+  group_by(region_2) %>%
+  summarise(Total_sv_needed = n(),
+            num_notrec = sum(MH_NOTGET)) %>%
+  mutate(services_rec = Total_sv_needed - num_notrec, 
+  Notrec_rate = num_notrec/Total_sv_needed)
+```
+
 DF3 <- MHdf_2 %>%
 dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
   filter(MHdf_2$insurance == "Private insurance only") %>%
@@ -185,9 +228,9 @@ dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
   mutate(services_nr = num_sv - num_rec, 
   rec_rate = num_rec/num_sv) 
   
-```
 
-```{r}
+
+
 DF5 <- MHdf_2 %>%
 dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
   filter(MHdf_2$insurance == "Public insurance only") %>%
@@ -196,7 +239,7 @@ dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
             num_rec = sum(MH_NOTGET)) %>%
   mutate(services_nr = num_sv - num_rec, 
   rec_rate = services_nr/num_sv) 
-```
+
 
 ```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= MHdf_2$region_2, fill = Mh_ntgt_2)) + geom_bar( position = position_dodge()) + labs(x= "REGION", y= "Count", subtitle = "Mental Health Services Needed but Not Recived by Region ", title = "Table 1")
