@@ -10,9 +10,14 @@ always_allow_html: true
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+rm(list = ls())
+```
+
 ```{r echo=FALSE}
 library(data.table)
 library(tidyverse)
+library(ggplot2)
 ```
 
 ```{r echo=FALSE}
@@ -20,102 +25,37 @@ pulse18 <- fread("pulse2020_puf_18.csv")
 
 ```
 
-## Introduction 
-
-#### During the COVID-19 pandemic, mental health services were disrupted, causing profound consequences for individuals in need of consistent mental health care. The pandemic exacerbated the need for mental health services which expanded an existing unmet demand. In addition to a shortage of mental health professionals, mental health providers needed to adjust service delivery to comply with safety protocols, which further inhibited access to care for some individuals. Further, at the onset of the pandemic, several state and local governments issued stay-at-home orders to reduce viral spread. These orders resulted in increased emotional distress e.g., anxiety, depression, and loss of employment. Employers are the leading providers of health insurance in the United States, suggesting that newly unemployed individuals may have lost access to secure healthcare coverage. The growing demand for mental health services, possible reduction in coverage, and changing delivery systems, may have decreased access to necessary mental health services during the COVID-19 pandemic. Therefore, the primary aim of this study is to establish insurance-related patterns of mental healthcare utilization. Specifically, did the absence of health insurance decrease access to mental health services during the COVID-19 pandemic? 
-
-## Methods
-
-### Database 
-
-#### The Household Pulse Survey (HPS) is a self-report online survey which measures in real time the social and economic impacts of the COVID-19 pandemic. In this study we analyzed HPS data from week 18,  October 28, 2021 – November 9, 2021. 
-
-### Sample
-
-#### Our study sample were all individuals who needed mental health services and either received services or did not between October 28, 2021, and November 9, 2021.  Mental health services were   Our insurance variable was coded for both private and public insurance, public insurance only, private insurance only, or none. Region was coded for Midwest, Northeast, South, and West depending on the census region. I subset the data from the larger data frame to include only the variables relevant to the study question (Identification number, gender, region, public health insurance, private health insurance, marital status, mental health service received, mental health service not received). We recoded the missing (-99) and non-answered (-88, 3) responses as NA in all variables. 
-
-
-
-
-
-
-
 ```{r echo=FALSE}
-MHdf <- subset(pulse18, select = c(SCRAM, TBIRTH_YEAR, MS, MH_SVCS, MH_NOTGET, EGENDER, ANYWORK, HLTHINS1, HLTHINS2, HLTHINS3, HLTHINS4, HLTHINS5, HLTHINS6, HLTHINS7, HLTHINS8))
+MHdf_2 <- subset(pulse18, select = c(SCRAM, REGION, PUBHLTH, PRIVHLTH, EST_ST, MH_SVCS, MH_NOTGET, INCOME))
 ```
 
 ```{r echo=FALSE}
-pulse18[pulse18$MH_NOTGET == -88] <- NA
-pulse18[pulse18$MH_NOTGET == -99] <- NA
-pulse18[pulse18$MH_SVCS == -88] <- NA
-pulse18[pulse18$MH_SVCS == -99] <- NA
-pulse18[pulse18$MS == -88] <- NA
-pulse18[pulse18$MS == -99] <- NA
-pulse18[pulse18$ANYWORK == -88] <- NA
-pulse18[pulse18$ANYWORK == -99] <- NA
-pulse18[pulse18$HLTHINS1 == -88] <- NA
-pulse18[pulse18$HLTHINS1 == -99] <- NA
-pulse18[pulse18$HLTHINS2 == -88] <- NA
-pulse18[pulse18$HLTHINS2 == -99] <- NA
-pulse18[pulse18$HLTHINS3 == -88] <- NA
-pulse18[pulse18$HLTHINS3 == -99] <- NA
-pulse18[pulse18$HLTHINS4 == -88] <- NA
-pulse18[pulse18$HLTHINS4 == -99] <- NA
-pulse18[pulse18$HLTHINS5 == -88] <- NA
-pulse18[pulse18$HLTHINS5 == -99] <- NA
-pulse18[pulse18$HLTHINS6 == -88] <- NA
-pulse18[pulse18$HLTHINS6 == -99] <- NA
-pulse18[pulse18$HLTHINS7 == -88] <- NA
-pulse18[pulse18$HLTHINS7 == -99] <- NA
-pulse18[pulse18$HLTHINS8 == -88] <- NA
-pulse18[pulse18$HLTHINS8 == -99] <- NA
+MHdf_2[MHdf_2$PUBHLTH == 3] <- NA
+MHdf_2[MHdf_2$PRIVHLTH == 3] <- NA
+MHdf_2[MHdf_2$INCOME == -99] <- NA
+MHdf_2[MHdf_2$INCOME == -88] <- NA
+MHdf_2[MHdf_2$MH_NOTGET == -99] <- NA
+MHdf_2[MHdf_2$MH_NOTGET == -88] <- NA
+MHdf_2[MHdf_2$MH_SVCS == -99] <- NA
+MHdf_2[MHdf_2$MH_SVCS == -88] <- NA
 ```
 
 
-```{r echo=FALSE}
-MHdf_2 <- subset(pulse18, select = c(SCRAM, REGION, PUBHLTH, PRIVHLTH, EST_ST, TBIRTH_YEAR, MS, MH_SVCS, MH_NOTGET, EGENDER, ANYWORK, HLTHINS1, HLTHINS2, HLTHINS3, HLTHINS4, HLTHINS5, HLTHINS6, HLTHINS7, HLTHINS8 ))
-```
 
 ```{r echo=FALSE}
 MHdf_2 <- na.omit(MHdf_2)
 ```
 
-```{r echo=FALSE}
-pulse18[pulse18$MH_NOTGET == -88] <- NA
-pulse18[pulse18$MH_NOTGET == -99] <- NA
-pulse18[pulse18$MH_SVCS == -88] <- NA
-pulse18[pulse18$MH_SVCS == -99] <- NA
-pulse18[pulse18$MS == -88] <- NA
-pulse18[pulse18$MS == -99] <- NA
-pulse18[pulse18$ANYWORK == -88] <- NA
-pulse18[pulse18$ANYWORK == -99] <- NA
-pulse18[pulse18$HLTHINS1 == -88] <- NA
-pulse18[pulse18$HLTHINS1 == -99] <- NA
-pulse18[pulse18$HLTHINS2 == -88] <- NA
-pulse18[pulse18$HLTHINS2 == -99] <- NA
-pulse18[pulse18$HLTHINS3 == -88] <- NA
-pulse18[pulse18$HLTHINS3 == -99] <- NA
-pulse18[pulse18$HLTHINS4 == -88] <- NA
-pulse18[pulse18$HLTHINS4 == -99] <- NA
-pulse18[pulse18$HLTHINS5 == -88] <- NA
-pulse18[pulse18$HLTHINS5 == -99] <- NA
-pulse18[pulse18$HLTHINS6 == -88] <- NA
-pulse18[pulse18$HLTHINS6 == -99] <- NA
-pulse18[pulse18$HLTHINS7 == -88] <- NA
-pulse18[pulse18$HLTHINS7 == -99] <- NA
-pulse18[pulse18$HLTHINS8 == -88] <- NA
-pulse18[pulse18$HLTHINS8 == -99] <- NA
-```
-```{r echo=FALSE}
-ins1_empl <- ifelse(MHdf$HLTHINS1 == "1", 1,0)
-ins2_markt <- ifelse(MHdf$HLTHINS2 == "1", 1,0)
-ins3_medicare <- ifelse(MHdf$HLTHINS3 == "1", 1,0)
-ins4_medicaid <- ifelse(MHdf$HLTHINS4 == "1", 1,0)
-ins5_tricare <- ifelse(MHdf$HLTHINS5 == "1", 1,0)
-ins6_va <- ifelse(MHdf$HLTHINS6 == "1", 1,0)
-ins7_indian <- ifelse(MHdf$HLTHINS7 == "1", 1,0)
-ins8_other <- ifelse(MHdf$HLTHINS8 == "1", 1,0)
-
+```{r}
+MHdf_2$income <- ifelse(MHdf_2$INCOME == "1", "< $25K",
+                        ifelse(MHdf_2$INCOME == "2", "$25K - $34.9K",
+                        ifelse(MHdf_2$INCOME == "3", "$35K - $49.9K",
+                        ifelse(MHdf_2$INCOME == "4", "$50K - $74.9K",
+                        ifelse(MHdf_2$INCOME == "5", "$75K - $99.9K", 
+                        ifelse(MHdf_2$INCOME == "6", "$100K - $149.9K",
+                        ifelse(MHdf_2$INCOME == "7", "$150K - $199.9K", ">$199.9K") 
+                          
+                        ))))))
 ```
 
 
@@ -124,8 +64,69 @@ MHdf_2$Mh_ntgt_2 <- ifelse(MHdf_2$MH_NOTGET == "1", "Services Not Recieved", "Se
 Mh_svs_2 <- ifelse(MHdf_2$PUBHLTH == "1", "Recieved services", "No Services")
 
 ```
+
+```{r}
+MHdf_2$state <- ifelse(MHdf_2$EST_ST == "1","Alabama",
+                ifelse(MHdf_2$EST_ST == "2", "Alaska",  
+                ifelse(MHdf_2$EST_ST == "4", "Arizona", 
+                ifelse(MHdf_2$EST_ST == "5", "Arkansas",
+                ifelse(MHdf_2$EST_ST == "6", "California", 
+                ifelse(MHdf_2$EST_ST == "8", "Colorado", 
+                ifelse(MHdf_2$EST_ST == "9", "Connecticut", 
+                ifelse(MHdf_2$EST_ST == "10","Delaware",
+                ifelse(MHdf_2$EST_ST == "11", "District of Columbia", 
+                ifelse(MHdf_2$EST_ST == "12", "Florida",     
+                ifelse(MHdf_2$EST_ST == "13", "Georgia",
+                ifelse(MHdf_2$EST_ST == "15", "Hawaii", 
+                ifelse(MHdf_2$EST_ST == "16", "Idaho",
+                ifelse(MHdf_2$EST_ST == "17", "Illinois", 
+                ifelse(MHdf_2$EST_ST == "18", "Indiana",
+                ifelse(MHdf_2$EST_ST == "19", "Iowa", 
+                ifelse(MHdf_2$EST_ST == "20", "Kansas", 
+                ifelse(MHdf_2$EST_ST == "21", "Kentucky", 
+                ifelse(MHdf_2$EST_ST == "22", "Louisiana", 
+                ifelse(MHdf_2$EST_ST == "23", "Maine", 
+                ifelse(MHdf_2$EST_ST == "24", "Maryland", 
+                ifelse(MHdf_2$EST_ST == "25", "Massachusetts", 
+                ifelse(MHdf_2$EST_ST == "26", "Michigan", 
+                ifelse(MHdf_2$EST_ST == "27", "Minnesota", 
+                ifelse(MHdf_2$EST_ST == "28", "Mississippi", 
+                ifelse(MHdf_2$EST_ST == "29", "Missouri", 
+                ifelse(MHdf_2$EST_ST == "30", "Montana",
+                ifelse(MHdf_2$EST_ST == "31", "Nebraska",
+                ifelse(MHdf_2$EST_ST == "32", "Nevada", 
+                ifelse(MHdf_2$EST_ST == "33", "New Hampshire",
+                ifelse(MHdf_2$EST_ST == "34", "New Jersey",
+                ifelse(MHdf_2$EST_ST == "35", "New Mexico",
+                ifelse(MHdf_2$EST_ST == "36", "New York",
+                ifelse(MHdf_2$EST_ST == "37", "North Carolina", 
+                ifelse(MHdf_2$EST_ST == "38", "North Dakota", 
+                ifelse(MHdf_2$EST_ST == "39", "Ohio",
+                ifelse(MHdf_2$EST_ST == "40", "Oklahoma",
+                ifelse(MHdf_2$EST_ST == "41", "Oregon",
+                ifelse(MHdf_2$EST_ST == "42", "Pennsylvania",
+                ifelse(MHdf_2$EST_ST == "44", "Rhode Island",
+                ifelse(MHdf_2$EST_ST == "45", "South Carolina",
+                ifelse(MHdf_2$EST_ST == "46", "South Dakota",
+                ifelse(MHdf_2$EST_ST == "47", "Tennessee",
+                ifelse(MHdf_2$EST_ST == "48", "Texas",
+                ifelse(MHdf_2$EST_ST == "49", "Utah",
+                ifelse(MHdf_2$EST_ST == "50", "Vermont",
+                ifelse(MHdf_2$EST_ST == "51", "Virginia",
+                ifelse(MHdf_2$EST_ST == "53", "Washington",
+                ifelse(MHdf_2$EST_ST == "54", "West Virgina",
+                ifelse(MHdf_2$EST_ST == "55", "Wisconsin", "Wyoming"
+                      ))))))))))))))))))))))))))))))))))))))))))))))))))
+                    table(MHdf_2$state, useNA = "always")
+                       
+                
+```
+
+
+
+
 ```{r echo=FALSE}
-MHdf_2$insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both", 
+MHdf_2$insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "Both", 
                     ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "2", "Public insurance only", 
                     ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "1", "Private insurance only", 
                     ifelse(MHdf_2$PUBHLTH == "2" & MHdf_2$PRIVHLTH == "2", "No Insurance", NA))))
@@ -133,18 +134,7 @@ MHdf_2$insurance <- ifelse(MHdf_2$PUBHLTH == "1" & MHdf_2$PRIVHLTH == "1", "both
 
 ```
 
-```{r echo=FALSE}
-MHdf_2[MHdf_2$PUBHLTH == 3] <- NA
-MHdf_2[MHdf_2$PRIVHLTH == 3] <- NA
-```
-```{r echo=FALSE}
-pubins <- ifelse(MHdf_2$PUBHLTH == "1", "Has public insurance", "No public insurance")
-privins <- ifelse(MHdf_2$PRIVHLTH == "1", "Has Private insuracne","No private insurance")
-```
 
-```{r echo=FALSE}
-library(ggplot2)
-```
 ```{r echo=FALSE}
 MHdf_2$region_2 <- ifelse(MHdf_2$REGION == "1", "Northeast",
             ifelse(MHdf_2$REGION == "2", "South",
@@ -152,10 +142,6 @@ MHdf_2$region_2 <- ifelse(MHdf_2$REGION == "1", "Northeast",
 ```
 
 
-
-```{r echo=FALSE}
-MH_sum <- sum(MHdf_2$MH_NOTGET, na.rm = TRUE)
-```
 ```{r echo=FALSE}
 prop.table(table(MHdf_2$Mh_ntgt_2, MHdf_2$insurance))*100
 ```
@@ -165,12 +151,56 @@ table(MHdf_2$Mh_ntgt_2, MHdf_2$insurance)
  
 ```
 
+```{r}
+DF2 <- MHdf_2 %>%
+dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
+  filter(MHdf_2$insurance == "Public insurance only") %>%
+  group_by(state) %>%
+  summarise(num_sv = n(),
+            num_rec = sum(MH_NOTGET)) %>%
+  mutate(services_nr = num_sv - num_rec, 
+  rec_rate = num_rec/num_sv) 
+  
+```
 
+```{r}
+DF4 <- MHdf_2 %>%
+dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
+  filter(MHdf_2$insurance == "Private insurance only") %>%
+  group_by(state) %>%
+  summarise(num_sv = n(),
+            num_rec = sum(MH_NOTGET)) %>%
+  mutate(services_nr = num_sv - num_rec, 
+  rec_rate = services_nr/num_sv) 
+  
+```
+
+```{r}
+DF3 <- MHdf_2 %>%
+dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
+  filter(MHdf_2$insurance == "Private insurance only") %>%
+  group_by(state) %>%
+  summarise(num_sv = n(),
+            num_rec = sum(MH_NOTGET)) %>%
+  mutate(services_nr = num_sv - num_rec, 
+  rec_rate = num_rec/num_sv) 
+  
+```
+
+```{r}
+DF5 <- MHdf_2 %>%
+dplyr::mutate(MH_NOTGET = ifelse(MHdf_2$MH_NOTGET == "1",1,0)) %>%
+  filter(MHdf_2$insurance == "Public insurance only") %>%
+  group_by(state) %>%
+  summarise(num_sv = n(),
+            num_rec = sum(MH_NOTGET)) %>%
+  mutate(services_nr = num_sv - num_rec, 
+  rec_rate = services_nr/num_sv) 
+```
 
 ```{r echo=FALSE}
 ggplot(MHdf_2, aes(x= MHdf_2$region_2, fill = Mh_ntgt_2)) + geom_bar( position = position_dodge()) + labs(x= "REGION", y= "Count", subtitle = "Mental Health Services Needed but Not Recived by Region ", title = "Table 1")
  
-
 ```
 
 ```{r echo=FALSE}
@@ -181,29 +211,4 @@ ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2 )) + geom_bar(position = positi
 
 ```
 
-
-```{r echo=FALSE}
-# ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = privins)) + geom_bar(position = position_dodge())
-```
-
-```{r echo=FALSE}
-# ggplot(MHdf_2, aes(x= privins, fill = Mh_ntgt_2, na.rm= TRUE )) + geom_bar () 
-
-```
-```{r echo=FALSE}
-# ggplot(MHdf_2, aes(x= pubins, fill = Mh_ntgt_2)) + geom_bar () 
-
-```
-
-
-
-
-```{r echo=FALSE}
-ggplot(MHdf_2, aes(x= Mh_ntgt_2, fill = MHdf_2$insurance)) + geom_bar(position = position_dodge()) + labs(x= "Mental Health Services", y= "Count", subtitle = "Mental Health Services Needed but Not Recived by Insurance", title = "Table 2")
-```
-
-
-## Conclusion 
-
-#### The results indicate that 6% (n= 2524) of individuals with private insurance who needed mental health services did not receive services. Conversely, 2% (n= 772) of people with public insurance who needed mental health services did not receive services. Our findings suggest that although mental health services were delayed during the pandemic a higher percentage of people who needed mental health service but did not receive it consisted of people with private insurance. Further research is needed to identify service and diagnosis-specific patterns in mental health care. 
 
