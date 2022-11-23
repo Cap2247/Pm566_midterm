@@ -254,4 +254,69 @@ ggplot(MHdf_2, aes(x= region_2, fill = Mh_ntgt_2 )) + geom_bar(position = positi
 
 ```
 
+```{r}
+if(!require(plotly)) install.packages("plotly", repos = "http://cran.us.r-project.org")
+library(plotly)
+```
+```{r}
+DF4 %>% 
+           plot_ly(x = ~Total_sv_needed, y = ~num_notrec, 
+                   type = 'scatter',
+                   mode = 'markers',
+                   color = ~state,
+                   colors = "Blues")
+```
+
+```{r}
+DF2 %>% 
+           plot_ly(x = ~Total_sv_needed, y = ~num_notrec, 
+                   type = 'scatter',
+                   mode = 'markers',
+                   color = ~state,
+                   colors = "Purples")
+```
+
+```{r}
+DF_region_Pri %>%
+  
+plot_ly(x = ~region_2, y = ~num_notrec, 
+                   type = 'bar',
+                   mode = 'markers',
+                   color = ~region_2,
+                   colors = "Blues")
+```
+
+```{r}
+DF_region_Pub %>%
+  
+plot_ly(x = ~region_2, y = ~num_notrec, 
+                   type = 'bar',
+                   mode = 'markers',
+                   color = ~region_2,
+                   colors = "Blues")
+```
+
+```{r}
+DF_income_Pri %>%
+  
+plot_ly(x = ~income, y = ~num_notrec, 
+                   type = 'bar',
+                   mode = 'markers',
+                   color = ~income,
+                   colors = "Blues")
+```
+
+
+```{r}
+DF_income_Pub %>%
+  
+plot_ly(x = ~income, y = ~num_notrec, 
+                   type = 'bar',
+                   mode = 'markers',
+                   color = ~income,
+                   colors = "Blues")
+```
+
+
+
 
