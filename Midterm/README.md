@@ -1,7 +1,7 @@
 Midterm
 ================
 Camille Parchment
-2022-11-22
+2022-11-28
 
 ``` r
 rm(list = ls())
@@ -998,11 +998,11 @@ plot_ly(x = ~income, y = ~num_notrec,
 ``` r
 DF_income_Pub %>%
   
-plot_ly(x = ~income, y = ~num_notrec, 
+plot_ly(x = ~income, y = ~Notrec_rate, 
                    type = 'bar',
                    mode = 'markers',
                    color = ~income,
-                   colors = "Blues")
+                   colors = "Reds")
 ```
 
     ## Warning: 'bar' objects don't have these attributes: 'mode'
@@ -1038,3 +1038,147 @@ plot_ly(x = ~income, y = ~num_notrec,
     ## '_deprecated', 'alignmentgroup', 'base', 'basesrc', 'cliponaxis', 'constraintext', 'customdata', 'customdatasrc', 'dx', 'dy', 'error_x', 'error_y', 'hoverinfo', 'hoverinfosrc', 'hoverlabel', 'hovertemplate', 'hovertemplatesrc', 'hovertext', 'hovertextsrc', 'ids', 'idssrc', 'insidetextanchor', 'insidetextfont', 'legendgroup', 'legendgrouptitle', 'legendrank', 'marker', 'meta', 'metasrc', 'name', 'offset', 'offsetgroup', 'offsetsrc', 'opacity', 'orientation', 'outsidetextfont', 'selected', 'selectedpoints', 'showlegend', 'stream', 'text', 'textangle', 'textfont', 'textposition', 'textpositionsrc', 'textsrc', 'texttemplate', 'texttemplatesrc', 'transforms', 'type', 'uid', 'uirevision', 'unselected', 'visible', 'width', 'widthsrc', 'x', 'x0', 'xaxis', 'xcalendar', 'xhoverformat', 'xperiod', 'xperiod0', 'xperiodalignment', 'xsrc', 'y', 'y0', 'yaxis', 'ycalendar', 'yhoverformat', 'yperiod', 'yperiod0', 'yperiodalignment', 'ysrc', 'key', 'set', 'frame', 'transforms', '_isNestedKey', '_isSimpleKey', '_isGraticule', '_bbox'
 
 ![](README_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+
+``` r
+library(leaflet)
+```
+
+``` r
+library(RColorBrewer)
+```
+
+``` r
+library(sf)
+```
+
+    ## Warning: package 'sf' was built under R version 4.2.2
+
+    ## Linking to GEOS 3.9.3, GDAL 3.5.2, PROJ 8.2.1; sf_use_s2() is TRUE
+
+``` r
+library(rgdal)
+```
+
+    ## Warning: package 'rgdal' was built under R version 4.2.2
+
+    ## Loading required package: sp
+
+    ## Please note that rgdal will be retired during 2023,
+    ## plan transition to sf/stars/terra functions using GDAL and PROJ
+    ## at your earliest convenience.
+    ## See https://r-spatial.org/r/2022/04/12/evolution.html and https://github.com/r-spatial/evolution
+    ## rgdal: version: 1.6-2, (SVN revision 1183)
+    ## Geospatial Data Abstraction Library extensions to R successfully loaded
+    ## Loaded GDAL runtime: GDAL 3.5.2, released 2022/09/02
+    ## Path to GDAL shared files: C:/Users/camil/AppData/Local/R/win-library/4.2/rgdal/gdal
+    ## GDAL binary built with GEOS: TRUE 
+    ## Loaded PROJ runtime: Rel. 8.2.1, January 1st, 2022, [PJ_VERSION: 821]
+    ## Path to PROJ shared files: C:/Users/camil/AppData/Local/R/win-library/4.2/rgdal/proj
+    ## PROJ CDN enabled: FALSE
+    ## Linking to sp version:1.5-1
+    ## To mute warnings of possible GDAL/OSR exportToProj4() degradation,
+    ## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.
+
+``` r
+library(raster)
+```
+
+    ## 
+    ## Attaching package: 'raster'
+
+    ## The following object is masked from 'package:plotly':
+    ## 
+    ##     select
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     select
+
+``` r
+large_data <- fread("world_country_and_usa_states_latitude_and_longitude_values.csv")
+```
+
+``` r
+state.lat.lon <- large_data[, c("usa_state", "usa_state_latitude", "usa_state_longitude")]
+state_data <- state.lat.lon[-40,]
+```
+
+``` r
+state_data <-rename(state_data, state = usa_state)
+```
+
+``` r
+state_data.comp <- state_data %>%
+                  left_join(DF2, by = c("state"))
+```
+
+``` r
+labels <- sprintf("<strong><br/>%g services not recieved rate", state_data.comp$Notrec_rate) %>% lapply(htmltools:: HTML)
+
+notrec.pal <- colorNumeric(palette = "PuRd", domain = state_data.comp$Notrec_rate)
+```
+
+map \<- state_data.comp %\>% st_transform (crs = “+init=epsg:4326”) %\>%
+leaflet() %\>% addProviderTiles(provider = “CartoDB.Positron”) %\>%
+addPolygons(label = labels, stroke = FALSE,
+
+              fillOpacity = 0.7,
+              opacity = 1,
+              fillColor = ~notrec.pal(Notrec_rate)                         )
+
+``` r
+l <- list(color = toRGB("white"), width=2)
+```
+
+``` r
+g <- list(
+     scope = 'usa',
+     projection = list(type = 'albers usa'),
+     showlakes = TRUE, 
+     lakecolor = toRGB('white')
+)
+```
+
+``` r
+state_data.comp$hover <- with(state_data.comp, paste(state, "state", '<br>', Notrec_rate, "services not received " ))
+```
+
+``` r
+fig <- plot_geo(state_data.comp, 
+               locationmode = 'USA-states')
+```
+
+``` r
+fig <- fig %>% add_trace 
+            z= ~state_data.comp$Total_sv_needed    
+            text= ~state_data.comp$hover
+       locations= ~state_data.comp$state
+           color= ~state_data.comp$Notrec_rate
+          colors= "Purples"
+```
+
+``` r
+fig %>% colorbar(title = "The rate of services not recieved")
+```
+
+    ## No scattergeo mode specifed:
+    ##   Setting the mode to markers
+    ##   Read more about this attribute -> https://plotly.com/r/reference/#scatter-mode
+
+    ## Warning: Didn't find a colorbar to modify.
+
+![](README_files/figure-gfm/unnamed-chunk-45-1.png)<!-- -->
+
+``` r
+fig %>% layout (title = "Mental Health Services Requested and Not Recieved")
+```
+
+    ## No scattergeo mode specifed:
+    ##   Setting the mode to markers
+    ##   Read more about this attribute -> https://plotly.com/r/reference/#scatter-mode
+
+![](README_files/figure-gfm/unnamed-chunk-45-2.png)<!-- -->
+
+``` r
+         geo =g
+```
