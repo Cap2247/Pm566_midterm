@@ -318,26 +318,6 @@ plot_ly(x = ~income, y = ~Notrec_rate,
 ```
 
 ```{r}
-library(leaflet)
-```
-
-
-```{r}
-library(RColorBrewer)
-```
-
-```{r}
-library(sf)
-```
-
-```{r}
-library(rgdal)
-library(raster)
-
-```
-
-
-```{r}
 large_data <- fread("world_country_and_usa_states_latitude_and_longitude_values.csv")
 ```
 
@@ -361,24 +341,14 @@ state_data.comp <- na.omit(state_data.comp)
 ```
 
 ```{r}
-
-labels <- sprintf("<strong><br/>%g services not recieved rate", state_data.comp$Notrec_rate) %>% lapply(htmltools:: HTML)
-
-notrec.pal <- colorNumeric(palette = "PuRd", domain = state_data.comp$Notrec_rate)
+state_data.comp_2 <- state_data.comp %>%  mutate(per.rate = Notrec_rate * 100)
 ```
+```{r}
+state_data.comp_2 [round(per.rate, digits = 2)]
 
-
-
-map <- state_data.comp %>% 
-  st_transform (crs = "+init=epsg:4326") %>%
-  leaflet() %>%
-  addProviderTiles(provider = "CartoDB.Positron") %>%
-  addPolygons(label = labels,
-              stroke = FALSE, 
-            
-              fillOpacity = 0.7,
-              opacity = 1,
-              fillColor = ~notrec.pal(Notrec_rate)                         )
+```  
+                                     
+                                    
 
 
 ```{r}
@@ -394,30 +364,59 @@ g <- list(
 ```
 
 ```{r}
-state_data.comp$hover <- with(state_data.comp, paste(state, "state", '<br>', Notrec_rate, "services not received " ))
+state_data.comp_2$hover <- with(state_data.comp_2, paste(state, '<br>', round(per.rate, digits = 2), " % services not received " ))
 ```
 
 
-```{r}
-fig <- plot_geo(state_data.comp, 
+
+#fig <- plot_geo(state_data.comp, 
                locationmode = 'USA-states')
-```
 
-```{r}
+
+
 fig <- fig %>% add_trace (z = ~state_data.comp$Total_sv_needed,    
-            text = ~state_data.comp$hover,
-       locations = ~state_data.comp$usa_state_code,
+        #    text = ~state_data.comp$hover,
+       #locations = ~state_data.comp$usa_state_code,
            color = ~state_data.comp$Notrec_rate,
           colors = 'Purples' )
-```
+
               
 
-```{r}
+
 fig <- fig  %>% layout (title = "Rate of Mental Health Services Requested and Not Recieved by state",
          geo =g )
          
 fig
+
+
+
+
+
+```{r}
+DF4.pri <- rename(DF4, total_sv_needed.pri = Total_sv_needed , num_notrec.pri = num_notrec , services_rec.pri = services_rec , Notrec_rate.pri = Notrec_rate )
+```
+```{r}
+DF2.pub <- rename(DF2, total_sv_needed.pub = Total_sv_needed , num_notrec.pub = num_notrec , services_rec.pub = services_rec , Notrec_rate.pub = Notrec_rate )
 ```
 
+```{r}
+map.data <- DF4.pri %>%
+                  left_join(DF2.pub, by = c("state"))
+```
 
+```{r}
+#map.data %>% summarise(Total_sv_needed = n(),
+           # num_notrec = sum(MH_NOTGET)) %>%
+ # mutate(services_rec = Total_sv_needed - num_notrec, 
+#  Notrec_rate = num_notrec/Total_sv_needed)
+```
+
+```{r}
+map.data %>% mutate(total.needed = total_sv_needed.pri + total_sv_needed.pub, tot.svs.notrec = num_notrec.pub + num_notrec.pri , tot.notrec.rate = tot.svs.notrec / total.needed, 
+                                                                                                                                                                                    ) 
+```
+
+```{r}
+#names(map.data)[names(map.data == "")]
+```
 

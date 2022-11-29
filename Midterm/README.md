@@ -1,7 +1,7 @@
 Midterm
 ================
 Camille Parchment
-2022-11-28
+2022-11-29
 
 ``` r
 rm(list = ls())
@@ -1040,61 +1040,6 @@ plot_ly(x = ~income, y = ~Notrec_rate,
 ![](README_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 
 ``` r
-library(leaflet)
-```
-
-``` r
-library(RColorBrewer)
-```
-
-``` r
-library(sf)
-```
-
-    ## Warning: package 'sf' was built under R version 4.2.2
-
-    ## Linking to GEOS 3.9.3, GDAL 3.5.2, PROJ 8.2.1; sf_use_s2() is TRUE
-
-``` r
-library(rgdal)
-```
-
-    ## Warning: package 'rgdal' was built under R version 4.2.2
-
-    ## Loading required package: sp
-
-    ## Please note that rgdal will be retired during 2023,
-    ## plan transition to sf/stars/terra functions using GDAL and PROJ
-    ## at your earliest convenience.
-    ## See https://r-spatial.org/r/2022/04/12/evolution.html and https://github.com/r-spatial/evolution
-    ## rgdal: version: 1.6-2, (SVN revision 1183)
-    ## Geospatial Data Abstraction Library extensions to R successfully loaded
-    ## Loaded GDAL runtime: GDAL 3.5.2, released 2022/09/02
-    ## Path to GDAL shared files: C:/Users/camil/AppData/Local/R/win-library/4.2/rgdal/gdal
-    ## GDAL binary built with GEOS: TRUE 
-    ## Loaded PROJ runtime: Rel. 8.2.1, January 1st, 2022, [PJ_VERSION: 821]
-    ## Path to PROJ shared files: C:/Users/camil/AppData/Local/R/win-library/4.2/rgdal/proj
-    ## PROJ CDN enabled: FALSE
-    ## Linking to sp version:1.5-1
-    ## To mute warnings of possible GDAL/OSR exportToProj4() degradation,
-    ## use options("rgdal_show_exportToProj4_warnings"="none") before loading sp or rgdal.
-
-``` r
-library(raster)
-```
-
-    ## 
-    ## Attaching package: 'raster'
-
-    ## The following object is masked from 'package:plotly':
-    ## 
-    ##     select
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     select
-
-``` r
 large_data <- fread("world_country_and_usa_states_latitude_and_longitude_values.csv")
 ```
 
@@ -1113,18 +1058,117 @@ state_data.comp <- state_data %>%
 ```
 
 ``` r
-labels <- sprintf("<strong><br/>%g services not recieved rate", state_data.comp$Notrec_rate) %>% lapply(htmltools:: HTML)
-
-notrec.pal <- colorNumeric(palette = "PuRd", domain = state_data.comp$Notrec_rate)
+state_data.comp_2 <- state_data.comp %>%  mutate(per.rate = Notrec_rate * 100)
 ```
 
-map \<- state_data.comp %\>% st_transform (crs = “+init=epsg:4326”) %\>%
-leaflet() %\>% addProviderTiles(provider = “CartoDB.Positron”) %\>%
-addPolygons(label = labels, stroke = FALSE,
+``` r
+state_data.comp_2 [round(per.rate, digits = 2)]
+```
 
-              fillOpacity = 0.7,
-              opacity = 1,
-              fillColor = ~notrec.pal(Notrec_rate)                         )
+    ##                    state usa_state_latitude usa_state_longitude usa_state_code
+    ##  1:               Kansas           39.01190           -98.48425             KS
+    ##  2:              Florida           27.66483           -81.51575             FL
+    ##  3:               Kansas           39.01190           -98.48425             KS
+    ##  4:             Illinois           40.63312           -89.39853             IL
+    ##  5:             Illinois           40.63312           -89.39853             IL
+    ##  6:             Kentucky           37.83933           -84.27002             KY
+    ##  7:              Arizona           34.04893          -111.09373             AZ
+    ##  8:             Illinois           40.63312           -89.39853             IL
+    ##  9:                 Iowa           41.87800           -93.09770             IA
+    ## 10:              Florida           27.66483           -81.51575             FL
+    ## 11:          Connecticut           41.60322           -73.08775             CT
+    ## 12:               Kansas           39.01190           -98.48425             KS
+    ## 13:                 Iowa           41.87800           -93.09770             IA
+    ## 14:                 Iowa           41.87800           -93.09770             IA
+    ## 15:                 Iowa           41.87800           -93.09770             IA
+    ## 16:              Florida           27.66483           -81.51575             FL
+    ## 17:               Hawaii           19.89868          -155.66586             HI
+    ## 18:               Hawaii           19.89868          -155.66586             HI
+    ## 19:              Georgia           32.15743           -82.90712             GA
+    ## 20:             Illinois           40.63312           -89.39853             IL
+    ## 21:             Illinois           40.63312           -89.39853             IL
+    ## 22:              Florida           27.66483           -81.51575             FL
+    ## 23:                 Iowa           41.87800           -93.09770             IA
+    ## 24:             Kentucky           37.83933           -84.27002             KY
+    ## 25:             Colorado           39.55005          -105.78207             CO
+    ## 26:                Maine           45.25378           -69.44547             ME
+    ## 27:              Georgia           32.15743           -82.90712             GA
+    ## 28:              Georgia           32.15743           -82.90712             GA
+    ## 29:              Georgia           32.15743           -82.90712             GA
+    ## 30:              Indiana           40.55122           -85.60236             IN
+    ## 31:               Hawaii           19.89868          -155.66586             HI
+    ## 32:                 Iowa           41.87800           -93.09770             IA
+    ## 33:            Louisiana           31.24482           -92.14502             LA
+    ## 34:              Florida           27.66483           -81.51575             FL
+    ## 35:                 Iowa           41.87800           -93.09770             IA
+    ## 36:              Florida           27.66483           -81.51575             FL
+    ## 37:              Georgia           32.15743           -82.90712             GA
+    ## 38:            Louisiana           31.24482           -92.14502             LA
+    ## 39:              Georgia           32.15743           -82.90712             GA
+    ## 40:                 Iowa           41.87800           -93.09770             IA
+    ## 41:             Colorado           39.55005          -105.78207             CO
+    ## 42:               Kansas           39.01190           -98.48425             KS
+    ## 43:              Georgia           32.15743           -82.90712             GA
+    ## 44: District of Columbia           38.90599           -77.03342             DC
+    ## 45:             Illinois           40.63312           -89.39853             IL
+    ## 46:        Massachusetts           42.40721           -71.38244             MA
+    ## 47:             Kentucky           37.83933           -84.27002             KY
+    ## 48:             Kentucky           37.83933           -84.27002             KY
+    ## 49:             Delaware           38.91083           -75.52767             DE
+    ## 50:             Maryland           39.04575           -76.64127             MD
+    ##                    state usa_state_latitude usa_state_longitude usa_state_code
+    ##     Total_sv_needed num_notrec services_rec Notrec_rate  per.rate
+    ##  1:              81         10           71  0.12345679 12.345679
+    ##  2:             210         23          187  0.10952381 10.952381
+    ##  3:              81         10           71  0.12345679 12.345679
+    ##  4:             128         17          111  0.13281250 13.281250
+    ##  5:             128         17          111  0.13281250 13.281250
+    ##  6:              99         12           87  0.12121212 12.121212
+    ##  7:             203         31          172  0.15270936 15.270936
+    ##  8:             128         17          111  0.13281250 13.281250
+    ##  9:             125         17          108  0.13600000 13.600000
+    ## 10:             210         23          187  0.10952381 10.952381
+    ## 11:              84          4           80  0.04761905  4.761905
+    ## 12:              81         10           71  0.12345679 12.345679
+    ## 13:             125         17          108  0.13600000 13.600000
+    ## 14:             125         17          108  0.13600000 13.600000
+    ## 15:             125         17          108  0.13600000 13.600000
+    ## 16:             210         23          187  0.10952381 10.952381
+    ## 17:              56         10           46  0.17857143 17.857143
+    ## 18:              56         10           46  0.17857143 17.857143
+    ## 19:              85          6           79  0.07058824  7.058824
+    ## 20:             128         17          111  0.13281250 13.281250
+    ## 21:             128         17          111  0.13281250 13.281250
+    ## 22:             210         23          187  0.10952381 10.952381
+    ## 23:             125         17          108  0.13600000 13.600000
+    ## 24:              99         12           87  0.12121212 12.121212
+    ## 25:             160         30          130  0.18750000 18.750000
+    ## 26:              58          6           52  0.10344828 10.344828
+    ## 27:              85          6           79  0.07058824  7.058824
+    ## 28:              85          6           79  0.07058824  7.058824
+    ## 29:              85          6           79  0.07058824  7.058824
+    ## 30:             124         13          111  0.10483871 10.483871
+    ## 31:              56         10           46  0.17857143 17.857143
+    ## 32:             125         17          108  0.13600000 13.600000
+    ## 33:              85         10           75  0.11764706 11.764706
+    ## 34:             210         23          187  0.10952381 10.952381
+    ## 35:             125         17          108  0.13600000 13.600000
+    ## 36:             210         23          187  0.10952381 10.952381
+    ## 37:              85          6           79  0.07058824  7.058824
+    ## 38:              85         10           75  0.11764706 11.764706
+    ## 39:              85          6           79  0.07058824  7.058824
+    ## 40:             125         17          108  0.13600000 13.600000
+    ## 41:             160         30          130  0.18750000 18.750000
+    ## 42:              81         10           71  0.12345679 12.345679
+    ## 43:              85          6           79  0.07058824  7.058824
+    ## 44:              53          8           45  0.15094340 15.094340
+    ## 45:             128         17          111  0.13281250 13.281250
+    ## 46:             134         21          113  0.15671642 15.671642
+    ## 47:              99         12           87  0.12121212 12.121212
+    ## 48:              99         12           87  0.12121212 12.121212
+    ## 49:              66          9           57  0.13636364 13.636364
+    ## 50:             106         16           90  0.15094340 15.094340
+    ##     Total_sv_needed num_notrec services_rec Notrec_rate  per.rate
 
 ``` r
 l <- list(color = toRGB("white"), width=2)
@@ -1140,27 +1184,65 @@ g <- list(
 ```
 
 ``` r
-state_data.comp$hover <- with(state_data.comp, paste(state, "state", '<br>', Notrec_rate, "services not received " ))
+state_data.comp_2$hover <- with(state_data.comp_2, paste(state, '<br>', round(per.rate, digits = 2), " % services not received " ))
 ```
 
-``` r
-fig <- plot_geo(state_data.comp, 
-               locationmode = 'USA-states')
-```
+\#fig \<- plot_geo(state_data.comp, locationmode = ‘USA-states’)
 
-``` r
-fig <- fig %>% add_trace (z = ~state_data.comp$Total_sv_needed,    
-            text = ~state_data.comp$hover,
-       locations = ~state_data.comp$usa_state_code,
-           color = ~state_data.comp$Notrec_rate,
-          colors = 'Purples' )
-```
+fig \<- fig %\>% add_trace (z =
+\~state_data.comp$Total_sv_needed,  # text = ~state_data.comp$hover,
+\#locations =
+\~state_data.comp$usa_state_code,  color = ~state_data.comp$Notrec_rate,
+colors = ‘Purples’ )
 
-``` r
-fig <- fig  %>% layout (title = "Rate of Mental Health Services Requested and Not Recieved by state",
-         geo =g )
-         
+fig \<- fig %\>% layout (title = “Rate of Mental Health Services
+Requested and Not Recieved by state”, geo =g )
+
 fig
+
+``` r
+DF4.pri <- rename(DF4, total_sv_needed.pri = Total_sv_needed , num_notrec.pri = num_notrec , services_rec.pri = services_rec , Notrec_rate.pri = Notrec_rate )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-45-1.png)<!-- -->
+``` r
+DF2.pub <- rename(DF2, total_sv_needed.pub = Total_sv_needed , num_notrec.pub = num_notrec , services_rec.pub = services_rec , Notrec_rate.pub = Notrec_rate )
+```
+
+``` r
+map.data <- DF4.pri %>%
+                  left_join(DF2.pub, by = c("state"))
+```
+
+``` r
+#map.data %>% summarise(Total_sv_needed = n(),
+           # num_notrec = sum(MH_NOTGET)) %>%
+ # mutate(services_rec = Total_sv_needed - num_notrec, 
+#  Notrec_rate = num_notrec/Total_sv_needed)
+```
+
+``` r
+map.data %>% mutate(total.needed = total_sv_needed.pri + total_sv_needed.pub, tot.svs.notrec = num_notrec.pub + num_notrec.pri , tot.notrec.rate = tot.svs.notrec / total.needed, 
+                                                                                                                                                                                    ) 
+```
+
+    ## # A tibble: 51 × 12
+    ##    state total…¹ num_n…² servi…³ Notre…⁴ total…⁵ num_n…⁶ servi…⁷ Notre…⁸ total…⁹
+    ##    <chr>   <int>   <dbl>   <dbl>   <dbl>   <int>   <dbl>   <dbl>   <dbl>   <int>
+    ##  1 Alab…     267      30     237  0.112       55       6      49  0.109      322
+    ##  2 Alas…     501      61     440  0.122      123      21     102  0.171      624
+    ##  3 Ariz…     501      46     455  0.0918     203      31     172  0.153      704
+    ##  4 Arka…     225      21     204  0.0933      89      16      73  0.180      314
+    ##  5 Cali…    1564     221    1343  0.141      406      61     345  0.150     1970
+    ##  6 Colo…     678      83     595  0.122      160      30     130  0.188      838
+    ##  7 Conn…     357      33     324  0.0924      84       4      80  0.0476     441
+    ##  8 Dela…     222      23     199  0.104       66       9      57  0.136      288
+    ##  9 Dist…     340      34     306  0.1         53       8      45  0.151      393
+    ## 10 Flor…     626      64     562  0.102      210      23     187  0.110      836
+    ## # … with 41 more rows, 2 more variables: tot.svs.notrec <dbl>,
+    ## #   tot.notrec.rate <dbl>, and abbreviated variable names ¹​total_sv_needed.pri,
+    ## #   ²​num_notrec.pri, ³​services_rec.pri, ⁴​Notrec_rate.pri, ⁵​total_sv_needed.pub,
+    ## #   ⁶​num_notrec.pub, ⁷​services_rec.pub, ⁸​Notrec_rate.pub, ⁹​total.needed
+
+``` r
+#names(map.data)[names(map.data == "")]
+```
