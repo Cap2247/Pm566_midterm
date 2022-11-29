@@ -1099,7 +1099,7 @@ large_data <- fread("world_country_and_usa_states_latitude_and_longitude_values.
 ```
 
 ``` r
-state.lat.lon <- large_data[, c("usa_state", "usa_state_latitude", "usa_state_longitude")]
+state.lat.lon <- large_data[, c("usa_state", "usa_state_latitude", "usa_state_longitude", "usa_state_code")]
 state_data <- state.lat.lon[-40,]
 ```
 
@@ -1149,36 +1149,18 @@ fig <- plot_geo(state_data.comp,
 ```
 
 ``` r
-fig <- fig %>% add_trace 
-            z= ~state_data.comp$Total_sv_needed    
-            text= ~state_data.comp$hover
-       locations= ~state_data.comp$state
-           color= ~state_data.comp$Notrec_rate
-          colors= "Purples"
+fig <- fig %>% add_trace (z = ~state_data.comp$Total_sv_needed,    
+            text = ~state_data.comp$hover,
+       locations = ~state_data.comp$usa_state_code,
+           color = ~state_data.comp$Notrec_rate,
+          colors = 'Purples' )
 ```
 
 ``` r
-fig %>% colorbar(title = "The rate of services not recieved")
+fig <- fig  %>% layout (title = "Rate of Mental Health Services Requested and Not Recieved by state",
+         geo =g )
+         
+fig
 ```
-
-    ## No scattergeo mode specifed:
-    ##   Setting the mode to markers
-    ##   Read more about this attribute -> https://plotly.com/r/reference/#scatter-mode
-
-    ## Warning: Didn't find a colorbar to modify.
 
 ![](README_files/figure-gfm/unnamed-chunk-45-1.png)<!-- -->
-
-``` r
-fig %>% layout (title = "Mental Health Services Requested and Not Recieved")
-```
-
-    ## No scattergeo mode specifed:
-    ##   Setting the mode to markers
-    ##   Read more about this attribute -> https://plotly.com/r/reference/#scatter-mode
-
-![](README_files/figure-gfm/unnamed-chunk-45-2.png)<!-- -->
-
-``` r
-         geo =g
-```
